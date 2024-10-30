@@ -48,7 +48,7 @@ jobs:
             PR_LINK="Not available"
           fi
           curl -X POST -H 'Content-type: application/json' \
-          --data "{\"text\":\"✅ PR deployed:* $PR_LINK\"}" \
+          --data "{\"text\":\"✅ *PR deployed:* $PR_LINK\"}" \
           $SLACK_WEBHOOK_URL
 
       - name: Notify Slack on Failure
@@ -62,5 +62,5 @@ jobs:
             PR_LINK="Not available"
           fi
           curl -X POST -H 'Content-type: application/json' \
-          --data "{\"text\":\"❌ PR deployment failed:* $PR_LINK\"}" \
+          --data "{\"text\":\"❌ *PR deployment failed:* $PR_LINK\"}" \
           $SLACK_WEBHOOK_URL
