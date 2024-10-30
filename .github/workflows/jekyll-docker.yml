@@ -41,7 +41,7 @@ jobs:
         if: success()
         uses: dawidd6/action-send-mail@v3
         with:
-          to: "vbridge_omnitail_conn-aaaajoq2l4cvj24wmfriugpmwi@omnitail.org.slack.com"
+          to: "jayant.jose@gmail.com"
           subject: "✅ PR Deployed Successfully"
           body: |
             The deployment for the PR was successful.
@@ -57,7 +57,7 @@ jobs:
         if: failure()
         uses: dawidd6/action-send-mail@v3
         with:
-          to: "vbridge_omnitail_conn-aaaajoq2l4cvj24wmfriugpmwi@omnitail.org.slack.com"
+          to: "jayant.jose@gmail.com"
           subject: "❌ PR Deployment Failed"
           body: |
             The deployment for the PR failed.
