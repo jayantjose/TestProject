@@ -20,6 +20,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
 
+      - name: Get PR number
+        id: get_pr
+        run: |
+          PR_NUMBER=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/pulls \
+          | jq '.[0].number')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Deploy using AWS CodeDeploy
         run: |
           aws deploy create-deployment \
@@ -29,14 +39,28 @@ jobs:
 
       - name: Notify Slack on Success
         if: success()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
+          if [ -n "$PR_NUMBER" ]; then
+            PR_LINK="https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          else
+            PR_LINK="Not available"
+          fi
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"✅ PR deployed"}' \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
-        
+          --data "{\"text\":\"✅ PR deployed\n*PR Link:* $PR_LINK\"}" \
+          $SLACK_WEBHOOK_URL
+
       - name: Notify Slack on Failure
         if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
+          if [ -n "$PR_NUMBER" ]; then
+            PR_LINK="https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          else
+            PR_LINK="Not available"
+          fi
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"❌ PR deployment failed"}' \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
+          --data "{\"text\":\"❌ PR deployment failed\n*PR Link:* $PR_LINK\"}" \
+          $SLACK_WEBHOOK_URL
