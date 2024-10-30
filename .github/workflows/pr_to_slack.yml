@@ -20,7 +20,7 @@ jobs:
             URL: ${{ github.event.pull_request.html_url }}
           from: "jayant.jose@gmail.com"
           server_address: "smtp.gmail.com"
-          server_port: 587
+          server_port: 465
           username: "jayant.jose@gmail.com"
           password: "msxxqktzknioxkuj"
           secure: true
