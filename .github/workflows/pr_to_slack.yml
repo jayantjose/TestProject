@@ -18,11 +18,11 @@ jobs:
             A new pull request has been created!
             Title: ${{ github.event.pull_request.title }}
             URL: ${{ github.event.pull_request.html_url }}
-          from: "${{ secrets.EMAIL_ADDRESS }}"
-          server_address: "${{ secrets.MAIL_HOST }}"
-          server_port: 465
-          username: "${{ secrets.EMAIL_ADDRESS }}"
-          password: "${{ secrets.EMAIL_PASSWORD }}"
+          from: "jayant.jose@gmail.com"
+          server_address: "smtp.gmail.com"
+          server_port: 587
+          username: "jayant.jose@gmail.com"
+          password: "msxxqktzknioxkuj"
           secure: true
       - name: Confirm Email Sent
         run: echo "Email action completed"
