@@ -1,0 +1,66 @@
+name: Deploy to EC2 with CodeDeploy
+
+on:
+  push:
+    branches:
+      - master  # Change this to the branch you want to trigger deployments on
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - name: Get PR number
+        id: get_pr
+        run: |
+          PR_NUMBER=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/pulls \
+          | jq '.[0].number')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy using AWS CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name TestProject \
+            --deployment-group-name TestProject \
+            --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+
+      - name: Notify Slack on Success
+        if: success()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "$PR_NUMBER" ]; then
+            PR_LINK="https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          else
+            PR_LINK="Not available"
+          fi
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{\"text\":\"✅ *PR deployed:* $PR_LINK\"}" \
+          $SLACK_WEBHOOK_URL
+
+      - name: Notify Slack on Failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "$PR_NUMBER" ]; then
+            PR_LINK="https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          else
+            PR_LINK="Not available"
+          fi
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{\"text\":\"❌ *PR deployment failed:* $PR_LINK\"}" \
+          $SLACK_WEBHOOK_URL

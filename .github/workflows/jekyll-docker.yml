@@ -37,30 +37,34 @@ jobs:
             --deployment-group-name TestProject \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
-      - name: Notify Slack on Success
+      - name: Send Success Email
         if: success()
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          if [ -n "$PR_NUMBER" ]; then
-            PR_LINK="https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
-          else
-            PR_LINK="Not available"
-          fi
-          curl -X POST -H 'Content-type: application/json' \
-          --data "{\"text\":\"✅ *PR deployed:* $PR_LINK\"}" \
-          $SLACK_WEBHOOK_URL
+        uses: dawidd6/action-send-mail@v3
+        with:
+          to: "vbridge_omnitail_conn-aaaajoq2l4cvj24wmfriugpmwi@omnitail.org.slack.com"
+          subject: "✅ PR Deployed Successfully"
+          body: |
+            The deployment for the PR was successful.
+            PR Link: https://github.com/${{ github.repository }}/pull/${{ env.PR_NUMBER }}
+          from: "${{ secrets.FROM_EMAIL_ADDRESS }}"
+          server_address: "${{ secrets.MAIL_HOST }}"
+          server_port: 587
+          username: "${{ secrets.EMAIL_ADDRESS }}"
+          password: "${{ secrets.EMAIL_PASSWORD }}"
+          secure: true
 
-      - name: Notify Slack on Failure
+      - name: Send Failure Email
         if: failure()
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          if [ -n "$PR_NUMBER" ]; then
-            PR_LINK="https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
-          else
-            PR_LINK="Not available"
-          fi
-          curl -X POST -H 'Content-type: application/json' \
-          --data "{\"text\":\"❌ *PR deployment failed:* $PR_LINK\"}" \
-          $SLACK_WEBHOOK_URL
+        uses: dawidd6/action-send-mail@v3
+        with:
+          to: "vbridge_omnitail_conn-aaaajoq2l4cvj24wmfriugpmwi@omnitail.org.slack.com"
+          subject: "❌ PR Deployment Failed"
+          body: |
+            The deployment for the PR failed.
+            PR Link: https://github.com/${{ github.repository }}/pull/${{ env.PR_NUMBER }}
+          from: "${{ secrets.EMAIL_ADDRESS }}"
+          server_address: "${{ secrets.MAIL_HOST }}"
+          server_port: 587
+          username: "${{ secrets.EMAIL_ADDRESS }}"
+          password: "${{ secrets.EMAIL_PASSWORD }}"
+          secure: true
