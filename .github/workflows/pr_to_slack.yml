@@ -18,11 +18,11 @@ jobs:
             A new pull request has been created!
             Title: ${{ github.event.pull_request.title }}
             URL: ${{ github.event.pull_request.html_url }}
-          from: "784494001@smtp-brevo.com"
-          server_address: "smtp-relay.brevo.com"
-          server_port: 587
-          username: "784494001@smtp-brevo.com"
-          password: "V9JRHFG74IBZA3k5"
-          secure: false
+          from: "admin@omnitailtools.com"
+          server_address: "omnitailtools.com"
+          server_port: 465
+          username: "admin@omnitailtools.comm"
+          password: "zwzF*!Brhluo"
+          secure: true
       - name: Confirm Email Sent
         run: echo "Email action completed"
