@@ -24,3 +24,5 @@ jobs:
           username: "${{ secrets.EMAIL_ADDRESS }}"
           password: "${{ secrets.EMAIL_PASSWORD }}"
           secure: false
+      - name: Confirm Email Sent
+        run: echo "Email action completed"
