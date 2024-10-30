@@ -51,7 +51,7 @@ jobs:
           server_port: 587
           username: "${{ secrets.EMAIL_ADDRESS }}"
           password: "${{ secrets.EMAIL_PASSWORD }}"
-          secure: true
+          secure: false
 
       - name: Send Failure Email
         if: failure()
@@ -67,4 +67,4 @@ jobs:
           server_port: 587
           username: "${{ secrets.EMAIL_ADDRESS }}"
           password: "${{ secrets.EMAIL_PASSWORD }}"
-          secure: true
+          secure: false
