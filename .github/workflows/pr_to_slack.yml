@@ -18,11 +18,11 @@ jobs:
             A new pull request has been created!
             Title: ${{ github.event.pull_request.title }}
             URL: ${{ github.event.pull_request.html_url }}
-          from: "jayant.jose@gmail.com"
-          server_address: "smtp.gmail.com"
+          from: "784494001@smtp-brevo.com"
+          server_address: "smtp-relay.brevo.com"
           server_port: 465
-          username: "jayant.jose@gmail.com"
-          password: "msxxqktzknioxkuj"
+          username: "784494001@smtp-brevo.com"
+          password: "V9JRHFG74IBZA3k5
           secure: true
       - name: Confirm Email Sent
         run: echo "Email action completed"
