@@ -31,12 +31,12 @@ jobs:
         if: success()
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"✅ PR deployed: ${{ github.event.pull_request.html_url }}"}' \
+          --data '{"text":"✅ PR deployed"}' \
           ${{ secrets.SLACK_WEBHOOK_URL }}
         
       - name: Notify Slack on Failure
         if: failure()
         run: |
           curl -X POST -H 'Content-type: application/json' \
-          --data '{"text":"❌ PR deployment failed: ${{ github.event.pull_request.html_url }}"}' \
+          --data '{"text":"❌ PR deployment failed"}' \
           ${{ secrets.SLACK_WEBHOOK_URL }}
