@@ -22,7 +22,7 @@ jobs:
           server_address: "smtp-relay.brevo.com"
           server_port: 465
           username: "784494001@smtp-brevo.com"
-          password: "V9JRHFG74IBZA3k5
+          password: "V9JRHFG74IBZA3k5"
           secure: true
       - name: Confirm Email Sent
         run: echo "Email action completed"
