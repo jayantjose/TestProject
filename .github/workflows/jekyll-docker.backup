@@ -37,34 +37,30 @@ jobs:
             --deployment-group-name TestProject \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
-      - name: Send Success Email
+      - name: Notify Slack on Success
         if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          to: "jayant.jose@gmail.com"
-          subject: "✅ PR Deployed Successfully"
-          body: |
-            The deployment for the PR was successful.
-            PR Link: https://github.com/${{ github.repository }}/pull/${{ env.PR_NUMBER }}
-          from: "${{ secrets.FROM_EMAIL_ADDRESS }}"
-          server_address: "${{ secrets.MAIL_HOST }}"
-          server_port: 587
-          username: "${{ secrets.EMAIL_ADDRESS }}"
-          password: "${{ secrets.EMAIL_PASSWORD }}"
-          secure: false
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "$PR_NUMBER" ]; then
+            PR_LINK="https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          else
+            PR_LINK="Not available"
+          fi
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{\"text\":\"✅ *PR deployed:* $PR_LINK\"}" \
+          $SLACK_WEBHOOK_URL
 
-      - name: Send Failure Email
+      - name: Notify Slack on Failure
         if: failure()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          to: "jayant.jose@gmail.com"
-          subject: "❌ PR Deployment Failed"
-          body: |
-            The deployment for the PR failed.
-            PR Link: https://github.com/${{ github.repository }}/pull/${{ env.PR_NUMBER }}
-          from: "${{ secrets.EMAIL_ADDRESS }}"
-          server_address: "${{ secrets.MAIL_HOST }}"
-          server_port: 587
-          username: "${{ secrets.EMAIL_ADDRESS }}"
-          password: "${{ secrets.EMAIL_PASSWORD }}"
-          secure: false
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "$PR_NUMBER" ]; then
+            PR_LINK="https://github.com/${{ github.repository }}/pull/$PR_NUMBER"
+          else
+            PR_LINK="Not available"
+          fi
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{\"text\":\"❌ *PR deployment failed:* $PR_LINK\"}" \
+          $SLACK_WEBHOOK_URL
